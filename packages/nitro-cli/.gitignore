@@ -1,0 +1,7 @@
+# Ignore the output directory
+output/
+
+# Environment variable files. Except the example
+.env
+.env.*
+!.env.example

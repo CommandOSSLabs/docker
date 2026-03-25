@@ -1,0 +1,32 @@
+services:
+  builder:
+    build: .
+    image: cmdoss/nitro-cli
+    volumes:
+      # Access the host Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Map a local folder to get the .eif file out
+      - ./output:/workspace
+    # Necessary for some nitro-cli operations
+    privileged: true
+    environment:
+      DOCKER_IMAGE_URI: ${DOCKER_IMAGE_URI:?Please provide DOCKER_IMAGE_URI}
+    command:
+      - build-enclave
+      - --docker-uri=${DOCKER_IMAGE_URI}
+      - --output-file=/workspace/image.eif
+      # Optional: If you have signing keys and certificates, you can include them here
+      # - --private-key=/signing-key.pem
+      # - --signing-certificate=/signing-certificate.pem
+
+  describer:
+    build: .
+    image: cmdoss/nitro-cli
+    depends_on:
+      builder:
+        condition: service_completed_successfully
+    volumes:
+      - ./output:/workspace:ro
+    command:
+      - describe-eif
+      - --eif-path=/workspace/image.eif
