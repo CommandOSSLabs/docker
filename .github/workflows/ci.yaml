@@ -1,4 +1,4 @@
-name: CI - Discover and Publish Packages
+name: CI
 
 on:
   push:
@@ -9,7 +9,10 @@ on:
       - scripts/sync-dockerhub-readme.mjs
       - .github/workflows/ci.yaml
       - .github/workflows/publish.yaml
-  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   trigger:
