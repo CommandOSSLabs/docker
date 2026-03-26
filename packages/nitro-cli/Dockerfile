@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.title="CommandOSS Nitro CLI" \
     org.opencontainers.image.url="https://github.com/CommandOSSLabs/docker" \
     org.opencontainers.image.vendor="CommandOSSLabs" \
     org.opencontainers.image.authors="CommandOSSLabs" \
-    org.opencontainers.image.licenses="MIT"
+    org.opencontainers.image.licenses="Apache-2.0"
 
 # Install Nitro CLI dependencies
 RUN dnf install -y \

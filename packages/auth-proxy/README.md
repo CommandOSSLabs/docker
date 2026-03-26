@@ -1,7 +1,5 @@
 # OpenResty JWT Reverse Proxy
 
-Source repository: https://github.com/commandOSSLabs/docker
-
 A high-performance reverse proxy built with **OpenResty** and **Lua** designed to add a security layer to private backend services. This proxy validates JSON Web Tokens (JWT) at the edge before traffic ever reaches your application.
 
 ## 🚀 Architecture
@@ -20,9 +18,9 @@ A high-performance reverse proxy built with **OpenResty** and **Lua** designed t
 
 You must set the following variable in your Railway project settings for this service:
 
-| Variable | Description |
-| --- | --- |
-| `JWT_SECRET` | The secret key used to sign and verify your tokens. |
+| Variable       | Description                                                                                   |
+| -------------- | --------------------------------------------------------------------------------------------- |
+| `JWT_SECRET`   | The secret key used to sign and verify your tokens.                                           |
 | `UPSTREAM_URL` | The URL of the backend service to proxy requests to (e.g., `http://my-backend-service:3000`). |
 
 ### 2. Deployment
@@ -75,3 +73,7 @@ const token = jwt.sign(
 console.log(`Bearer ${token}`);
 
 ```
+
+## License
+
+This project is licensed under the Apache License 2.0.
