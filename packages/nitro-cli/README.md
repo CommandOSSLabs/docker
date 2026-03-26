@@ -1,5 +1,7 @@
 # nitro-cli Package
 
+Source repository: https://github.com/commandOSSLabs/docker
+
 Containerized `nitro-cli` tooling for building and inspecting [AWS Nitro Enclave] EIF images.
 
 This package wraps the Nitro Enclaves CLI in Docker Compose so you can:
