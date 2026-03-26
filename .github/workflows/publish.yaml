@@ -1,0 +1,163 @@
+name: Publish Docker Packages
+
+on:
+  workflow_call:
+    inputs:
+      deploy-nitro-cli:
+        required: false
+        type: boolean
+        default: false
+      # Add more packages below as needed
+      # deploy-foo:
+      #   required: false
+      #   type: boolean
+      #   default: false
+  workflow_dispatch:
+    inputs:
+      deploy-nitro-cli:
+        description: "Deploy nitro-cli package"
+        required: false
+        type: boolean
+        default: true
+      # Add more packages below as needed
+      # deploy-foo:
+      #   description: 'Deploy foo package'
+      #   required: false
+      #   type: boolean
+      #   default: true
+
+jobs:
+  discover:
+    name: Resolve Package Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has-packages: ${{ steps.build-matrix.outputs.has-packages }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build matrix input
+        id: build-matrix
+        shell: bash
+        env:
+          DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE }}
+          DEPLOY_NITRO_CLI: ${{ inputs.deploy-nitro-cli }}
+          # Add more package env vars below as needed
+          # DEPLOY_FOO: ${{ inputs.deploy-foo }}
+        run: |
+          set -euo pipefail
+
+          :${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE variable is required}
+
+          is_package_selected() {
+            local package_name="$1"
+
+            case "${package_name}" in
+              nitro-cli)
+                [[ "${DEPLOY_NITRO_CLI}" == "true" ]] && return 0 || return 1
+                ;;
+              # Add more packages below as needed
+              # foo)
+              #   [[ "${DEPLOY_FOO}" == "true" ]] && return 0 || return 1
+              #   ;;
+              *)
+                return 1
+                ;;
+            esac
+          }
+
+          matrix_json="$(
+            find packages -mindepth 1 -maxdepth 1 -type d | sort | while read -r package_dir; do
+              if [[ ! -f "${package_dir}/Dockerfile" ]]; then
+                continue
+              fi
+
+              package_name="$(basename "${package_dir}")"
+              if ! is_package_selected "${package_name}"; then
+                continue
+              fi
+
+              readme_path="${package_dir}/README.md"
+              if [[ ! -f "${readme_path}" ]]; then
+                readme_path="README.md"
+              fi
+
+              jq -cn \
+                --arg package_name "${package_name}" \
+                --arg context_path "${package_dir}" \
+                --arg dockerfile_path "${package_dir}/Dockerfile" \
+                --arg readme_path "${readme_path}" \
+                --arg dockerhub_repo "${DOCKERHUB_NAMESPACE}/${package_name}" \
+                '{name:$package_name,context:$context_path,dockerfile:$dockerfile_path,readme:$readme_path,dockerhub_repo:$dockerhub_repo}'
+            done | jq -sc .
+          )"
+
+          if [[ "${matrix_json}" == "[]" ]]; then
+            echo "has-packages=false" >> "$GITHUB_OUTPUT"
+            echo "matrix=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "has-packages=true" >> "$GITHUB_OUTPUT"
+          echo "matrix=${matrix_json}" >> "$GITHUB_OUTPUT"
+
+  build-and-push:
+    name: Build and Push (${{ matrix.package.name }})
+    runs-on: ubuntu-latest
+    needs: discover
+    if: needs.discover.outputs.has-packages == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    steps:
+      - name: 🛎 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🏗 Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: 🔐 Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 🏷 Derive image tags
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ matrix.package.dockerhub_repo }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=main,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=dev,enable=${{ github.ref_name == 'dev' }}
+            type=sha,prefix=sha-
+
+      - name: ⚒️ Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.package.context }}
+          file: ${{ matrix.package.dockerfile }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=gha,scope=${{ matrix.package.name }}
+            type=registry,ref=${{matrix.package.dockerhub_repo}}:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
+          cache-to: |
+            type=gha,mode=max,scope=${{ matrix.package.name }}
+            type=registry,ref=${{matrix.package.dockerhub_repo}}:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
+
+      - name: 🔄 Sync Docker Hub README and description
+        env:
+          DOCKERHUB_REPO: ${{ matrix.package.dockerhub_repo }}
+          DOCKERHUB_README_PATH: ${{ matrix.package.readme }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: node scripts/sync-dockerhub-readme.mjs

@@ -1,0 +1,22 @@
+name: CI - Discover and Publish Packages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - packages/**
+      - scripts/sync-dockerhub-readme.mjs
+      - .github/workflows/ci.yaml
+      - .github/workflows/publish.yaml
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    name: Publish Packages
+    uses: ./.github/workflows/publish.yaml
+    with:
+      deploy-nitro-cli: true
+      # Add more packages below as needed
+      # deploy-foo: true
+    secrets: inherit
