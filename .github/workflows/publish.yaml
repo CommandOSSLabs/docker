@@ -48,7 +48,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          :${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE variable is required}
+          : ${DOCKERHUB_NAMESPACE:?DOCKERHUB_NAMESPACE variable is required}
 
           is_package_selected() {
             local package_name="$1"
