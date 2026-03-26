@@ -15,13 +15,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detect-changes:
+    name: Detect Package Changes
+    runs-on: ubuntu-latest
+    outputs:
+      nitro-cli: ${{ steps.filter.outputs.nitro-cli }}
+      auth-proxy: ${{ steps.filter.outputs.auth-proxy }}
+      walrus-upload-relay: ${{ steps.filter.outputs.walrus-upload-relay }}
+      global: ${{ steps.filter.outputs.global }}
+    steps:
+      - name: 🛎 Checkout
+        uses: actions/checkout@v6
+
+      - name: 🔍 Detect changed packages
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            nitro-cli:
+              - 'packages/nitro-cli/**'
+            auth-proxy:
+              - 'packages/auth-proxy/**'
+            walrus-upload-relay:
+              - 'packages/walrus-upload-relay/**'
+            global:
+              - 'scripts/sync-dockerhub-readme.mjs'
+              - '.github/workflows/ci.yaml'
+              - '.github/workflows/publish.yaml'
+
   trigger:
     name: Publish Packages
+    needs: detect-changes
     uses: ./.github/workflows/publish.yaml
     with:
-      deploy-nitro-cli: true
-      deploy-auth-proxy: true
-      deploy-walrus-upload-relay: true
+      deploy-nitro-cli: ${{ needs.detect-changes.outputs.nitro-cli == 'true' || needs.detect-changes.outputs.global == 'true' }}
+      deploy-auth-proxy: ${{ needs.detect-changes.outputs.auth-proxy == 'true' || needs.detect-changes.outputs.global == 'true' }}
+      deploy-walrus-upload-relay: ${{ needs.detect-changes.outputs.walrus-upload-relay == 'true' || needs.detect-changes.outputs.global == 'true' }}
       # Add more packages below as needed
-      # deploy-foo: true
+      # deploy-foo: ${{ needs.detect-changes.outputs.foo == 'true' || needs.detect-changes.outputs.global == 'true' }}
     secrets: inherit
