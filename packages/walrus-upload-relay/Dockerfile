@@ -1,7 +1,7 @@
 ARG TARGETPLATFORM
 
-FROM --platform=linux/amd64 mysten/walrus-upload-relay:main-v1.41.0 AS base-amd64
-FROM --platform=linux/arm64 mysten/walrus-upload-relay:main-arm64-v1.41.0 AS base-arm64
+FROM --platform=linux/amd64 mysten/walrus-upload-relay:main-v1.46.0 AS base-amd64
+FROM --platform=linux/arm64 mysten/walrus-upload-relay:main-arm64-v1.46.0 AS base-arm64
 
 FROM base-${TARGETPLATFORM#linux/} AS final
 
