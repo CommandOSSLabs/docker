@@ -1,0 +1,19 @@
+ARG TARGETPLATFORM
+
+FROM --platform=linux/amd64 mysten/walrus-upload-relay:main-v1.41.0 AS base-amd64
+FROM --platform=linux/arm64 mysten/walrus-upload-relay:main-arm64-v1.41.0 AS base-arm64
+
+FROM base-${TARGETPLATFORM#linux/} AS final
+
+LABEL org.opencontainers.image.title="CommandOSS Walrus Upload Relay" \
+  org.opencontainers.image.description="Configurable Walrus upload relay image" \
+  org.opencontainers.image.source="https://github.com/CommandOSSLabs/docker" \
+  org.opencontainers.image.url="https://github.com/CommandOSSLabs/docker" \
+  org.opencontainers.image.vendor="CommandOSSLabs" \
+  org.opencontainers.image.authors="CommandOSSLabs" \
+  org.opencontainers.image.licenses="MIT"
+
+COPY --from=hairyhenderson/gomplate:stable /gomplate /bin/gomplate
+COPY ./templates /templates
+COPY --chmod=755 ./scripts/entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

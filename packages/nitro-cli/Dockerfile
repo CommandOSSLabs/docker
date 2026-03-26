@@ -1,5 +1,13 @@
 FROM amazonlinux:2023
 
+LABEL org.opencontainers.image.title="CommandOSS Nitro CLI" \
+    org.opencontainers.image.description="Nitro CLI tooling image for enclave build workflows" \
+    org.opencontainers.image.source="https://github.com/CommandOSSLabs/docker" \
+    org.opencontainers.image.url="https://github.com/CommandOSSLabs/docker" \
+    org.opencontainers.image.vendor="CommandOSSLabs" \
+    org.opencontainers.image.authors="CommandOSSLabs" \
+    org.opencontainers.image.licenses="MIT"
+
 # Install Nitro CLI dependencies
 RUN dnf install -y \
     aws-nitro-enclaves-cli \
@@ -7,8 +15,5 @@ RUN dnf install -y \
     docker \
     gzip \
     tar
-
-WORKDIR /workspace
-VOLUME [ "/workspace" ]
 
 ENTRYPOINT [ "/usr/bin/nitro-cli" ]

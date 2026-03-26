@@ -21,6 +21,7 @@ jobs:
     with:
       deploy-nitro-cli: true
       deploy-auth-proxy: true
+      deploy-walrus-upload-relay: true
       # Add more packages below as needed
       # deploy-foo: true
     secrets: inherit

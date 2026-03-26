@@ -11,6 +11,10 @@ on:
         required: false
         type: boolean
         default: false
+      deploy-walrus-upload-relay:
+        required: false
+        type: boolean
+        default: false
       # Add more packages below as needed
       # deploy-foo:
       #   required: false
@@ -25,6 +29,11 @@ on:
         default: true
       deploy-auth-proxy:
         description: "Deploy auth-proxy package"
+        required: false
+        type: boolean
+        default: true
+      deploy-walrus-upload-relay:
+        description: "Deploy walrus-upload-relay package"
         required: false
         type: boolean
         default: true
@@ -53,6 +62,7 @@ jobs:
           DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE }}
           DEPLOY_NITRO_CLI: ${{ inputs.deploy-nitro-cli }}
           DEPLOY_AUTH_PROXY: ${{ inputs.deploy-auth-proxy }}
+          DEPLOY_WALRUS_UPLOAD_RELAY: ${{ inputs.deploy-walrus-upload-relay }}
           # Add more package env vars below as needed
           # DEPLOY_FOO: ${{ inputs.deploy-foo }}
         run: |
@@ -69,6 +79,9 @@ jobs:
                 ;;
               auth-proxy)
                 [[ "${DEPLOY_AUTH_PROXY}" == "true" ]] && return 0 || return 1
+                ;;
+              walrus-upload-relay)
+                [[ "${DEPLOY_WALRUS_UPLOAD_RELAY}" == "true" ]] && return 0 || return 1
                 ;;
               # Add more packages below as needed
               # foo)
