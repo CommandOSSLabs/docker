@@ -7,6 +7,10 @@ on:
         required: false
         type: boolean
         default: false
+      deploy-auth-proxy:
+        required: false
+        type: boolean
+        default: false
       # Add more packages below as needed
       # deploy-foo:
       #   required: false
@@ -16,6 +20,11 @@ on:
     inputs:
       deploy-nitro-cli:
         description: "Deploy nitro-cli package"
+        required: false
+        type: boolean
+        default: true
+      deploy-auth-proxy:
+        description: "Deploy auth-proxy package"
         required: false
         type: boolean
         default: true
@@ -43,6 +52,7 @@ jobs:
         env:
           DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE }}
           DEPLOY_NITRO_CLI: ${{ inputs.deploy-nitro-cli }}
+          DEPLOY_AUTH_PROXY: ${{ inputs.deploy-auth-proxy }}
           # Add more package env vars below as needed
           # DEPLOY_FOO: ${{ inputs.deploy-foo }}
         run: |
@@ -56,6 +66,9 @@ jobs:
             case "${package_name}" in
               nitro-cli)
                 [[ "${DEPLOY_NITRO_CLI}" == "true" ]] && return 0 || return 1
+                ;;
+              auth-proxy)
+                [[ "${DEPLOY_AUTH_PROXY}" == "true" ]] && return 0 || return 1
                 ;;
               # Add more packages below as needed
               # foo)
