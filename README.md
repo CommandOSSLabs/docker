@@ -1,10 +1,10 @@
-# CommandOSS Docker Images
+# CommandOSS Tools
 
-Collection of Docker images for CommandOSS projects.
+Collection of tools for CommandOSS projects.
 
-## Available Images
+## Available Tools
 
-| **Image**                    | **Description**                                   |
+| **Tool**                    | **Description**                                   |
 | ---------------------------- | ------------------------------------------------- |
 | `cmdoss/auth-proxy`          | OpenResty + Lua JWT authentication reverse proxy. |
 | `cmdoss/nitro-cli`           | Containerized AWS Nitro Enclaves CLI.             |
