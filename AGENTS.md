@@ -18,9 +18,6 @@ WIP
 - Prefer minimal edits; avoid broad reformatting of config or generated files.
 - When adding a package, follow existing layout:
   - packages/<name>/README.md
-- When developing JavaScript or TypeScript GitHub Actions, prefer GitHub Actions toolkit packages whenever possible.
-- For GitHub Actions, use toolkit primitives such as `@actions/core`, `@actions/exec`, `@actions/io`, `@actions/tool-cache`, and `@actions/cache` instead of custom wrappers when the toolkit already covers the behavior.
-- If an action bundles a committed runtime artifact, regenerate and verify the checked-in bundle after source changes.
 
 ## Architecture and Key Files
 
