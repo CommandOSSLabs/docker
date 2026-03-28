@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!bun.lock", "!actions/setup-sui-cli/dist/index.js"]
+    "includes": ["**", "!bun.lock", "!actions/setup-sui-cli/dist"]
   },
   "formatter": {
     "enabled": true,

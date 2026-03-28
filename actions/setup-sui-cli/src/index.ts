@@ -8,7 +8,7 @@ import { resolvePlatformSpec } from './platform.ts'
 
 const SUPPORTED_NETWORKS = new Set(['mainnet', 'testnet'])
 
-export async function main(): Promise<void> {
+async function main(): Promise<void> {
   const network = core.getInput('network') || 'testnet'
   const privateKey = core.getInput('private_key')
   const version = core.getInput('version') || 'mainnet-v1.68.1'
@@ -39,4 +39,10 @@ export async function main(): Promise<void> {
       'private_key input is empty; installed Sui CLI only and skipped wallet configuration.'
     )
   }
+}
+
+try {
+  await main()
+} catch (error) {
+  core.setFailed(error instanceof Error ? error.message : String(error))
 }

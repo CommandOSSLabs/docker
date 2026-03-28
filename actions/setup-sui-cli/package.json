@@ -1,11 +1,11 @@
 {
   "name": "setup-sui-cli-action",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
-  "main": "dist/index.js",
+  "license": "Apache-2.0",
+  "main": "dist/index.mjs",
   "scripts": {
-    "build": "bun build ./index.ts --target=node --format=esm --outfile=dist/index.js"
+    "build": "tsdown"
   },
   "dependencies": {
     "@actions/cache": "^4.1.0",
@@ -16,6 +16,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^24.5.2"
+    "@types/node": "^24.5.2",
+    "tsdown": "^0.21.7"
   }
 }
