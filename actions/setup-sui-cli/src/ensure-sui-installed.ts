@@ -70,6 +70,9 @@ export async function ensureSuiInstalled(
     }
   }
 
+  // Verify installation. `sui` command should now be available in PATH and return the expected version.
   await runCommand('sui', ['--version'])
+
+  // Ensure Sui CLI is properly initialized by checking active environment (this will trigger Sui CLI to create necessary config files if not already present)
   await runCommand('sui', ['client', '-y', 'active-env'])
 }
