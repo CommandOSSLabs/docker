@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "module": "ESNext",
+    "target": "ESNext",
+    "noEmit": true
+  },
+  "include": ["index.ts"]
+}

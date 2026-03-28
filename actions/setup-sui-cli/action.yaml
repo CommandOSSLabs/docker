@@ -1,0 +1,25 @@
+name: Setup Sui CLI
+description: Install a specific Sui CLI version and configure a deployer wallet for a target network.
+
+inputs:
+  network:
+    description: Target Sui network (mainnet or testnet).
+    required: false
+    default: testnet
+  private_key:
+    description: Sui private key to import into the local keystore. When omitted, the action only installs the CLI.
+    required: false
+  version:
+    description: Sui CLI version tag to install.
+    required: false
+    default: mainnet-v1.68.1
+
+outputs:
+  rpc_url:
+    description: Resolved Sui RPC endpoint for the selected network.
+  active_address:
+    description: Active Sui address imported into the wallet.
+
+runs:
+  using: node20
+  main: dist/index.js
