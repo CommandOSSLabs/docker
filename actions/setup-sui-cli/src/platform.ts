@@ -63,7 +63,7 @@ export function resolvePlatformSpec(): PlatformSpec {
   throw new Error(`Unsupported runner combination: ${runnerOs}/${runnerArch}.`)
 }
 
-export function buildReleaseArchiveName(version: string): string {
+export function buildReleaseArchiveName(version: string) {
   const { archiveSuffix } = resolvePlatformSpec()
-  return `sui-${version}-${archiveSuffix}.tgz`
+  return `sui-${version}-${archiveSuffix}.tgz` as const
 }

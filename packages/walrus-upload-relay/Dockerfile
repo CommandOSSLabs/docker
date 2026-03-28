@@ -7,8 +7,8 @@ FROM base-${TARGETPLATFORM#linux/} AS final
 
 LABEL org.opencontainers.image.title="CommandOSS Walrus Upload Relay" \
   org.opencontainers.image.description="Configurable Walrus upload relay image" \
-  org.opencontainers.image.source="https://github.com/CommandOSSLabs/docker" \
-  org.opencontainers.image.url="https://github.com/CommandOSSLabs/docker" \
+  org.opencontainers.image.source="https://github.com/CommandOSSLabs/tools" \
+  org.opencontainers.image.url="https://github.com/CommandOSSLabs/tools" \
   org.opencontainers.image.vendor="CommandOSSLabs" \
   org.opencontainers.image.authors="CommandOSSLabs" \
   org.opencontainers.image.licenses="Apache-2.0"
