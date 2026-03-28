@@ -64509,7 +64509,13 @@ async function configureWallet(network, privateKey) {
     throw new Error(`Could not resolve RPC URL from Sui config for network alias: ${network}. Expected one of the configured Sui environments (for this action: mainnet or testnet).`);
   }
   core.info("Importing private key...");
-  const importResultRaw = await runCommand("sui", ["keytool", "import", privateKey, "ed25519", "--json"]);
+  const importResultRaw = await runCommand("sui", [
+    "keytool",
+    "import",
+    privateKey,
+    "ed25519",
+    "--json"
+  ]);
   core.info(`Import result: ${importResultRaw.stdout}`);
   const importJson = parseJsonOrThrow(importResultRaw.stdout, "sui keytool import --json");
   const deployerAddress = resolveDeployerAddress(importJson);
@@ -64519,7 +64525,10 @@ async function configureWallet(network, privateKey) {
   core.info(`Imported deployer address: ${deployerAddress} with network ${network} (RPC: ${rpcUrl})`);
   await runCommand("sui", ["client", "switch", "--env", network]);
   await runCommand("sui", ["client", "switch", "--address", deployerAddress]);
-  const activeAddressResult = await runCommand("sui", ["client", "active-address"]);
+  const activeAddressResult = await runCommand("sui", [
+    "client",
+    "active-address"
+  ]);
   const activeAddress = activeAddressResult.stdout;
   core.info(`Sui active address: ${activeAddress}`);
   core.setOutput("rpc_url", rpcUrl);

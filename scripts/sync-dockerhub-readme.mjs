@@ -4,14 +4,14 @@ const DEBUG =
   process.env.DOCKERHUB_DEBUG === '1' || process.env.DOCKERHUB_DEBUG === 'true'
 
 const log = {
-  info: message => process.stderr.write(`ℹ️  ${message}\n`),
-  ok: message => process.stderr.write(`✅ ${message}\n`),
-  step: message => process.stderr.write(`🔄 ${message}\n`),
-  auth: message => process.stderr.write(`🔐 ${message}\n`),
-  doc: message => process.stderr.write(`📄 ${message}\n`),
-  debug: message => {
+  info: (message) => process.stderr.write(`ℹ️  ${message}\n`),
+  ok: (message) => process.stderr.write(`✅ ${message}\n`),
+  step: (message) => process.stderr.write(`🔄 ${message}\n`),
+  auth: (message) => process.stderr.write(`🔐 ${message}\n`),
+  doc: (message) => process.stderr.write(`📄 ${message}\n`),
+  debug: (message) => {
     if (DEBUG) process.stderr.write(`🧪 ${message}\n`)
-  }
+  },
 }
 
 function usageAndExit(code = 0) {
@@ -38,7 +38,7 @@ function parseArgs(argv) {
   const args = {
     repo: undefined,
     readmePath: undefined,
-    shortDescription: undefined
+    shortDescription: undefined,
   }
 
   for (let index = 0; index < argv.length; index++) {
@@ -75,8 +75,8 @@ function toTitleAndFirstParagraph(markdown) {
 
   const title =
     lines
-      .map(line => line.trim())
-      .find(line => line.startsWith('# '))
+      .map((line) => line.trim())
+      .find((line) => line.startsWith('# '))
       ?.replace(/^#\s+/, '')
       .trim() || ''
 
@@ -112,7 +112,7 @@ function bearerHeaders(token) {
   return {
     authorization: `Bearer ${token}`,
     'content-type': 'application/json',
-    'user-agent': 'wal-0 sync-dockerhub-readme'
+    'user-agent': 'wal-0 sync-dockerhub-readme',
   }
 }
 
@@ -154,9 +154,9 @@ async function getDockerHubBearerToken() {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      'user-agent': 'wal-0 sync-dockerhub-readme'
+      'user-agent': 'wal-0 sync-dockerhub-readme',
     },
-    body: JSON.stringify({ identifier, secret })
+    body: JSON.stringify({ identifier, secret }),
   })
 
   if (!response.ok) {
@@ -209,10 +209,10 @@ async function patchRepo({ repo, token, readme, shortDescription }) {
 
   const body = {
     full_description: readme,
-    ...(shortDescription ? { description: shortDescription } : {})
+    ...(shortDescription ? { description: shortDescription } : {}),
   }
 
-  const attempt = url =>
+  const attempt = (url) =>
     fetch(url, { method: 'PATCH', headers, body: JSON.stringify(body) })
 
   let response = await attempt(v2BetaUrl)
