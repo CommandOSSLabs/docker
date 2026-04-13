@@ -109,13 +109,23 @@ jobs:
                 readme_path="README.md"
               fi
 
+              # If present, use OCI image version label from Dockerfile as an additional image tag.
+              image_version=""
+              if [[ -f "${package_dir}/Dockerfile" ]]; then
+                image_version="$(
+                  sed -n 's/^[[:space:]]*org\.opencontainers\.image\.version="\([^"]*\)".*/\1/p' "${package_dir}/Dockerfile" \
+                    | head -n1
+                )"
+              fi
+
               jq -cn \
                 --arg package_name "${package_name}" \
                 --arg context_path "${package_dir}" \
                 --arg dockerfile_path "${package_dir}/Dockerfile" \
                 --arg readme_path "${readme_path}" \
+                --arg image_version "${image_version}" \
                 --arg dockerhub_repo "${DOCKERHUB_NAMESPACE}/${package_name}" \
-                '{name:$package_name,context:$context_path,dockerfile:$dockerfile_path,readme:$readme_path,dockerhub_repo:$dockerhub_repo}'
+                '{name:$package_name,context:$context_path,dockerfile:$dockerfile_path,readme:$readme_path,image_version:$image_version,dockerhub_repo:$dockerhub_repo}'
             done | jq -sc .
           )"
 
@@ -162,6 +172,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
             type=raw,value=main,enable=${{ github.ref_name == 'main' }}
             type=raw,value=dev,enable=${{ github.ref_name == 'dev' }}
+            type=raw,value=${{ matrix.package.image_version }},enable=${{ matrix.package.image_version != '' }}
             type=sha,prefix=sha-
 
       - name: ⚒️ Build and push image

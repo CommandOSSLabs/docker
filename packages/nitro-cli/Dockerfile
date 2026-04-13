@@ -2,6 +2,7 @@ FROM amazonlinux:2023
 
 LABEL org.opencontainers.image.title="CommandOSS Nitro CLI" \
     org.opencontainers.image.description="Nitro CLI tooling image for enclave build workflows" \
+    org.opencontainers.image.version="1.0.0" \
     org.opencontainers.image.source="https://github.com/CommandOSSLabs/tools" \
     org.opencontainers.image.url="https://github.com/CommandOSSLabs/tools" \
     org.opencontainers.image.vendor="CommandOSSLabs" \

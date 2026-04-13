@@ -2,6 +2,7 @@ FROM openresty/openresty:1.29.2.2-alpine-fat
 
 LABEL org.opencontainers.image.title="CommandOSS Auth Proxy" \
   org.opencontainers.image.description="OpenResty-based JWT authentication proxy" \
+  org.opencontainers.image.version="1.0.0" \
   org.opencontainers.image.source="https://github.com/CommandOSSLabs/tools" \
   org.opencontainers.image.url="https://github.com/CommandOSSLabs/tools" \
   org.opencontainers.image.vendor="CommandOSSLabs" \
